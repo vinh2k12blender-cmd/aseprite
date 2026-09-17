@@ -7,7 +7,7 @@
 
 ## Introduction
 
-**Aseprite** is a program to create animated sprites. Its main features are:
+**Aseprite** is a program to create animated sprites. Its main features are:,
 
 * Sprites are composed of [layers &amp; frames](https://www.aseprite.org/docs/timeline/) as separated concepts.
 * Support for [color profiles](https://www.aseprite.org/docs/color-profile/) and different [color modes](https://www.aseprite.org/docs/color-mode/): RGBA, Indexed (palettes up to 256 colors), Grayscale.
