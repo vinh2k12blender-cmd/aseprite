@@ -8,19 +8,30 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-    - name: Install Dependencies
+    - name: Install Skia
+      shell: bash
       run: |
-        choco install ninja cmake
-    - name: Download Skia
+        curl --ssl-revoke-best-effort -L -o "Skia-Windows-Release-x64.zip" "https://github.com"
+        unzip "Skia-Windows-Release-x64.zip" -d skia
+    - uses: aseprite/get-ninja@main
+    - uses: TheMrMilchmann/setup-msvc-dev@v4
+      with:
+        arch: x64
+    - name: Generating Makefiles
+      shell: bash
       run: |
-        curl -L -o skia.zip https://github.com
-        expand-archive skia.zip -destinationpath C:\skia
-    - name: Configure CMake
+        cmake -S . -B build -G Ninja \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DENABLE_TESTS=OFF \
+          -DENABLE_SCRIPTING=ON \
+          -DENABLE_CCACHE=OFF \
+          -DLAF_BACKEND=skia \
+          -DSKIA_DIR=$(realpath skia) \
+          -DSKIA_LIBRARY_DIR=$(realpath skia/out/Release-x64)
+    - name: Compiling
+      shell: bash
       run: |
-        cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR=C:\skia -DSKIA_LIBRARY_DIR=C:\skia\out\Release-x64 -DSKIA_LIBRARY=C:\skia\out\Release-x64\skia.lib
-    - name: Build Aseprite
-      run: |
-        cmake --build build --target aseprite
+        cd build && ninja aseprite
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
